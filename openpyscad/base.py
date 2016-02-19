@@ -2,19 +2,31 @@
 
 from modifier import ModifierMixin
 
-
-class KindError(Exception):
-    pass
+__all__ = ["_Empty", "Union", "Difference", "Intersection",
+           "Translate", "Rotate", "Scale", "Resize",
+           "Sphere", "Cube", "Cylinder", "Polyhedron"]
 
 
 class MetaObject(type):
 
     object_definition = {
+        # Bool
         "union": ("union", (), True),
         "difference": ("difference", (), True),
-        "rotate": ("rotate", ("a", "v"), True),
+        "intersection": ("intersection", (), True),
+        # Transforms
         "translate": ("translate", ("v", ), True),
-        "cube": ("cube", ("size", "center"), False)
+        "rotate": ("rotate", ("a", "v"), True),
+        "scale": ("scale", ("v", ), True),
+        "resize": ("resize", ("newsize", "auto"), True),
+        # 3D
+        "sphere": ("sphere", ("r", "d", "_fa", "_fs", "_fn"), False),
+        "cube": ("cube", ("size", "center"), False),
+        "cylinder": ("cylinder",
+                     ("h", "r", "r1", "r2", "d", "d1", "d2", "center", "_fa", "_fs", "_fn"),
+                     False
+                     ),
+        "polyhedron": ("polyhedron", ("points", "triangles", "faces", "convexity"), False)
     }
 
     def __new__(mcs, name, bases, attr):
@@ -47,7 +59,13 @@ class _BaseObject(ModifierMixin, object):
 
     def _get_params(self):
         valid_keys = filter(lambda x: getattr(self, x) is not None, self._properties)
-        return " ".join(map(lambda x: "{}={},".format(x, getattr(self, x)), valid_keys))[:-1]
+
+        def convert_special_args(arg_name):
+            if arg_name[0] == "_":
+                return "$" + arg_name[1:]
+            return arg_name
+
+        return " ".join(map(lambda x: "{}={},".format(convert_special_args(x), getattr(self, x)), valid_keys))[:-1]
 
     def _get_children_content(self, indent_level=0):
         _content = ""
@@ -73,6 +91,9 @@ class _BaseObject(ModifierMixin, object):
             self.children.append(obj)
             return self
 
+    def dump(self, fp):
+        fp.write(self.dumps())
+
     def dumps(self, indent_level=0):
         return "{indent}{prefix}{op_name}({params}){content};\n".format(
             indent="    " * indent_level,
@@ -81,6 +102,10 @@ class _BaseObject(ModifierMixin, object):
             params=self._get_params(),
             content=self._get_content(indent_level)
         )
+
+    def write(self, filename):
+        with open(filename, "w") as fp:
+            self.dump(fp)
 
     def clone(self):
         import copy
@@ -97,9 +122,7 @@ class _BaseObject(ModifierMixin, object):
             self.append(other)
             return self
         else:
-            new_union = Union()
-            new_union.append(self).append(other)
-            return new_union
+            return Union().append(self).append(other)
 
     def __sub__(self, other):
         if isinstance(self, _Empty):
@@ -109,15 +132,24 @@ class _BaseObject(ModifierMixin, object):
             self.append(other)
             return self
         else:
-            new_diff = Difference()
-            new_diff.append(self).append(other)
-            return new_diff
+            return Difference().append(self).append(other)
+
+    def __and__(self, other):
+        if isinstance(self, _Empty):
+            return other
+
+        elif isinstance(self, Intersection):
+            self.append(other)
+            return self
+        else:
+            return Intersection().append(self).append(other)
 
 
 class _Empty(_BaseObject):
     pass
 
 
+# Boolean
 class Union(_BaseObject):
     pass
 
@@ -126,7 +158,11 @@ class Difference(_BaseObject):
     pass
 
 
-# Affine transform
+class Intersection(_BaseObject):
+    pass
+
+
+# Transformations
 class Translate(_BaseObject):
     pass
 
@@ -135,39 +171,54 @@ class Rotate(_BaseObject):
     pass
 
 
-# Shape Objects
+class Scale(_BaseObject):
+    pass
+
+
+class Resize(_BaseObject):
+    pass
+
+
+# 3D
 class _ShapeObject(_BaseObject):
 
     def translate(self, *args, **kwargs):
-        _t = Translate(*args, **kwargs)
-        _t.append(self)
-        return _t
+        return Translate(*args, **kwargs).append(self)
 
     def rotate(self, *args, **kwargs):
-        _r = Rotate(*args, **kwargs)
-        _r.append(self)
-        return _r
+        return Rotate(*args, **kwargs).append(self)
+
+    def scale(self, *args, **kwargs):
+        return Scale(*args, **kwargs).append(self)
+
+    def resize(self, *args, **kwargs):
+        return Resize(*args, **kwargs).append(self)
+
+
+class Sphere(_ShapeObject):
+    pass
 
 
 class Cube(_ShapeObject):
-    size = None
-    center = None
+    pass
+
+
+class Cylinder(_ShapeObject):
+    pass
+
+
+class Polyhedron(_ShapeObject):
+    pass
 
 if __name__ == "__main__":
-    c1 = Cube([20, 20, 20])
-    c2 = c1.clone()
 
-    base = Cube([20, 20, 20])
-    sum = reduce(lambda t, x: t + base.rotate([0, 0, x * 36]), range(10), _Empty())
-    # sum = None
-    # for i in range(10):
-    #     _rot = base.rotate([0, 0, i * 36])
-    #
-    #     if sum is None:
-    #         sum = _rot
-    #     else:
-    #         sum += _rot
+    i = Intersection()
+    i.append(Cube([20, 20, 15]))
+    i.append(Sphere(10, _fn=40))
 
-    print sum
-    #
-    # print c1.rotate([10, 10, 10])
+    i2 = Cube([20, 20, 15]) & Sphere(10, _fn=40)
+    # base = Cube([20, 20, 15]) + Sphere(10, _fn=40)
+    # print base
+    # base.write('test.scad')
+    print i2
+    i2.write("test.scad")
