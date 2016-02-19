@@ -144,6 +144,18 @@ class _BaseObject(ModifierMixin, object):
         else:
             return Intersection().append(self).append(other)
 
+    def translate(self, *args, **kwargs):
+        return Translate(*args, **kwargs).append(self)
+
+    def rotate(self, *args, **kwargs):
+        return Rotate(*args, **kwargs).append(self)
+
+    def scale(self, *args, **kwargs):
+        return Scale(*args, **kwargs).append(self)
+
+    def resize(self, *args, **kwargs):
+        return Resize(*args, **kwargs).append(self)
+
 
 class _Empty(_BaseObject):
     pass
@@ -181,18 +193,7 @@ class Resize(_BaseObject):
 
 # 3D
 class _ShapeObject(_BaseObject):
-
-    def translate(self, *args, **kwargs):
-        return Translate(*args, **kwargs).append(self)
-
-    def rotate(self, *args, **kwargs):
-        return Rotate(*args, **kwargs).append(self)
-
-    def scale(self, *args, **kwargs):
-        return Scale(*args, **kwargs).append(self)
-
-    def resize(self, *args, **kwargs):
-        return Resize(*args, **kwargs).append(self)
+    pass
 
 
 class Sphere(_ShapeObject):

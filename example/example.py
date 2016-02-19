@@ -7,12 +7,6 @@ sys.path.append(
 
 import openpyscad as ops  # noqa
 
-c1 = ops.Cube([20, 10, 10])
-c2 = ops.Cube([10, 20, 10])
-c3 = ops.Cube([10, 10, 20])
-
-d1 = c1 + c2 + c3
-d2 = c1 & c2 & c3
-
-d1.write("example.scad")
-# d2.write("example.scad")
+c1 = ops.Cube([20, 20, 20])
+c2 = ops.Cube([10, 10, 40]).translate([5, 5, -10])
+(c1 - c2).rotate([0, 0, 45]).write("example.scad")
