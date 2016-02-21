@@ -11,4 +11,3 @@ __author__ = "Takuro Wada"
 __email__ = "taxpon@gmail.com"
 __url__ = "https://github.com/taxpon/openpyscad"
 __license__ = "MIT"
-

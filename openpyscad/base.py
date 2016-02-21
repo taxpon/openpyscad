@@ -2,7 +2,8 @@
 
 from modifiers import ModifierMixin
 
-__all__ = ["Empty", "BaseObject", "set_value"]
+__all__ = ["Empty", "BaseObject"]
+INDENT = "    "
 
 
 class MetaObject(type):
@@ -119,8 +120,8 @@ class _BaseObject(ModifierMixin, object):
             return ""
         else:
             return "{{\n{children}{indent}}}".format(
-                children=self._get_children_content(indent_level+1),
-                indent="    " * indent_level
+                children=self._get_children_content(indent_level + 1),
+                indent=INDENT * indent_level
             )
 
     def append(self, obj):
@@ -139,7 +140,7 @@ class _BaseObject(ModifierMixin, object):
 
     def dumps(self, indent_level=0):
         return "{indent}{prefix}{op_name}({params}){content};\n".format(
-            indent="    " * indent_level,
+            indent=INDENT * indent_level,
             prefix=self.mod.get_prefix(),
             op_name=self._name,
             params=self._get_params(),
@@ -219,13 +220,3 @@ class _Empty(_BaseObject):
     pass
 
 Empty = _Empty
-
-
-def set_value(name, value):
-
-    if isinstance(value, (str, unicode)):
-        _value = "\"{}\"".format(value)
-    else:
-        _value = "{}".format(value)
-
-    return "{name}={value};".format(name=name, value=_value)
