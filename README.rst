@@ -7,7 +7,7 @@ OpenPySCAD
 .. image:: https://coveralls.io/repos/github/taxpon/openpyscad/badge.svg?branch=master
     :target: https://coveralls.io/github/taxpon/openpyscad?branch=master
 
-Python library to generate OpenSCAD source code. This library provides intuitive interface when you handle 3D data.
+Python library to generate `OpenSCAD <http://www.openscad.org/>`_ source code. This library provides intuitive interface when you handle 3D data.
 
 
 Usage
@@ -28,7 +28,14 @@ Usage
     c2 = ops.Cube([20, 10, 10])
     (c1 + c2).write("sample.scad")
 
-3. Generated code will be written in the "sample.scad". OpenSCAD can detect the change of your code and reload automatically (that's so cool).
+3. Generated code will be written in the "sample.scad". OpenSCAD can detect the change of your code and reload automatically. That's so cool :D
+
+.. code-block:: openscad
+
+    union(){
+        cube([10, 20, 10]);
+        cube([20, 10, 10]);
+    };
 
 
 3D Shape
