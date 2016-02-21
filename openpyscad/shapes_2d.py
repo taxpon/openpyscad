@@ -6,6 +6,8 @@ __all__ = ["Circle", "Square", "Polygon", "Text"]
 class _Shape2dObject(_BaseObject):
     pass
 
+Shape2dObject = _Shape2dObject
+
 
 class Circle(_Shape2dObject):
     pass

@@ -155,10 +155,25 @@ class TestBaseObject(unittest.TestCase):
         o1 = o.resize([10, 10, 10])
         self.assertTrue(isinstance(o1, Resize))
         self.assertEqual(o1.children, [o])
-        o1 = o.resize(o1.newsize, [10, 10, 10])
+
+    def test_mirror(self):
+        o = Cube(10)
+        o1 = o.mirror([1, 1, 1])
+        self.assertTrue(isinstance(o1, Mirror))
+        self.assertEqual(o1.children, [o])
         
     def test_color(self):
         o = Cube(10)
         o1 = o.color("Red")
         self.assertTrue(isinstance(o1, Color))
         self.assertEqual(o1.children, [o])
+
+    def test_offset(self):
+        o = Circle(10)
+        o1 = o.offset([10, 10, 10])
+        self.assertTrue(isinstance(o1, Offset))
+        self.assertEqual(o1.children, [o])
+
+        o = Cube(10)
+        with self.assertRaises(TypeError):
+            o.offset([10, 10, 10])

@@ -38,35 +38,47 @@ Usage
     };
 
 
-3D Shape
---------
+Generated code examples
+-----------------------
 
-Cube
-^^^^
+3D Shapes
+^^^^^^^^^
 
-Source:
+Python:
 
 .. code-block:: python
 
+    Sphere(r=10, _fn=100)
     Cube([10, 10, 10])
+    Cylinder(h=10, r=10)
+    p = Polyhedron(
+        points=[
+            [10, 10, 0], [10, -10, 0], [-10, -10, 0], [-10, 10, 0],  [0, 0, 10]
+        ],
+        faces=[
+            [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4],  [1, 0, 3], [2, 1, 3]
+        ]
+    )
 
 
-Generated code: openscad
+Generated OpenSCAD code: openscad
 
 .. code-block::
 
-    cube([10, 10, 10]);
+    sphere(r=10, d=10, $fn=100);
+    cube(size=[10, 10, 10]);
+    cylinder(h=10, r=10);
+    polyhedron(points=[[10, 10, 0], [10, -10, 0], [-10, -10, 0], [-10, 10, 0], [0, 0, 10]], faces=[[0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4], [1, 0, 3], [2, 1, 3]]);
 
-Boolean Operation
------------------
 
-Union
-^^^^^
+Boolean Operations
+^^^^^^^^^^^^^^^^^^
 
-Source:
+Python:
 
 .. code-block:: python
 
+    # Union
     Cube([20, 10, 10]) + Cube([10, 20, 10])
 
     # You can also write like this
@@ -74,22 +86,7 @@ Source:
     u.append(Cube[20, 10, 10])
     u.append(Cube[10, 20, 10])
 
-Generated code:
-
-.. code-block:: openscad
-
-    union(){
-        cube([20, 10, 10])
-        cube([10, 20, 10])
-    };
-
-Difference
-^^^^^^^^^^
-
-Source:
-
-.. code-block:: python
-
+    # Difference
     Cube([20, 10, 10]) - Cube([10, 20, 10])
 
     # You can also write like this
@@ -97,23 +94,7 @@ Source:
     i.append(Cube[20, 10, 10])
     i.append(Cube[10, 20, 10])
 
-Generated code:
-
-.. code-block:: openscad
-
-    difference(){
-        cube([20, 10, 10]);
-        cube([10, 20, 10]);
-    };
-
-
-Intersection
-^^^^^^^^^^^^
-
-Source:
-
-.. code-block:: python
-
+    # Intersection
     Cube([20, 10, 10]) & Cube([10, 20, 10])
 
     # You can also write like this
@@ -121,62 +102,113 @@ Source:
     i.append(Cube[20, 10, 10])
     i.append(Cube[10, 20, 10])
 
-Generated code:
+Generated OpenSCAD code: openscad
 
 .. code-block:: openscad
 
+    // Union
+    union(){
+        cube([20, 10, 10])
+        cube([10, 20, 10])
+    };
+
+    // Difference
+    difference(){
+        cube([20, 10, 10]);
+        cube([10, 20, 10]);
+    };
+
+    // Intersection
     intersection(){
         cube([20, 10, 10]);
         cube([10, 20, 10]);
     };
 
 
-Transform
----------
+Transformations
+^^^^^^^^^^^^^^^
 
-Translate
-^^^^^^
-
-Source:
+Python:
 
 .. code-block:: python
 
+    # Translate
     Cube([20, 10, 10]).translate([10, 10, 10])
 
-    # You can also write like this
-    r = Translate([10, 10, 10])
-    r.append(Cube[20, 10, 10])
+    # Rotate
+    Cube([20, 10, 10]).rotate([0, 0, 45])
 
-Generated code:
+    # Scale
+    Cube([20, 10, 10]).scale([2, 1, 1])
+
+    # Resize
+    Cube([20, 10, 10]).resize([2, 1, 1])
+
+    # Mirror
+    Cube([20, 10, 10]).mirror([1, 1, 1])
+
+    # Color
+    Cube([20, 10, 10]).color("Red")
+
+    # Offset
+    Circle(10).offset(10)
+
+
+
+Generated OpenSCAD code:
 
 .. code-block:: openscad
 
-    translate([10, 10, 10]){
+    // Translate
+    translate(v=[10, 10, 10]){
         cube([20, 10, 10]);
     };
 
+    // Rotate
+    rotate(v=[0, 0, 45]){
+        cube([20, 10, 10]);
+    };
+
+    // Scale
+    scale(v=[2, 1, 1]){
+        cube([20, 10, 10]);
+    };
+
+    // Resize
+    resize(newsize=[2, 1, 1]){
+        cube(size=[20, 10, 10]);
+    };
+
+    // Mirror
+    mirror([1, 1, 1]){
+        cube(size=[20, 10, 10]);
+    };
+
+    // Color
+    color("Red"){
+        cube(size=[20, 10, 10]);
+    };
+
+    // Offset
+    offset(r=10){
+        circle(r=10);
+    };
 
 
-Rotate
-^^^^^^
+Modifiers
+^^^^^^^^^
+OpenPySCAD provides `modifiers <https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Modifier_Characters>`_ interfaces ("*", "!", "#" and "%").
 
-Source:
+Python
 
 .. code-block:: python
 
-    Cube([20, 10, 10]).rotate([0, 0, 45])
+    c1 = Cube(10)
+    c1.disable()         # add "*" character
+    c1.show_only()       # add "!" character
+    c1.is_debug()        # add "#" character
+    c1.is_transparent()  # add "&" character
 
-    # You can also write like this
-    r = Rotate([0, 0, 45])
-    r.append(Cube[20, 10, 10])
-
-Generated code:
-
-.. code-block:: openscad
-
-    rotate([0, 0, 45]){
-        cube([20, 10, 10]);
-    };
 
 LICENSE
 -------

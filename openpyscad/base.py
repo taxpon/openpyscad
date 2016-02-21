@@ -124,10 +124,16 @@ class _BaseObject(ModifierMixin, object):
                 indent=INDENT * indent_level
             )
 
+    def _validate_append(self, obj):
+        """Override if any validation in append operation is required.
+        :param obj:
+        """
+
     def append(self, obj):
         if not self.has_child:
             raise TypeError("This object can not have any children.")
         else:
+            self._validate_append(obj)
             if isinstance(obj, (list, tuple, set)):
                 for o in obj:
                     self.append(o)
@@ -209,9 +215,17 @@ class _BaseObject(ModifierMixin, object):
         from transformations import Resize
         return Resize(*args, **kwargs).append(self)
 
+    def mirror(self, *args, **kwargs):
+        from transformations import Mirror
+        return Mirror(*args, **kwargs).append(self)
+
     def color(self, *args, **kwargs):
         from transformations import Color
         return Color(*args, **kwargs).append(self)
+
+    def offset(self, *args, **kwargs):
+        from transformations import Offset
+        return Offset(*args, **kwargs).append(self)
 
 BaseObject = _BaseObject
 

@@ -30,7 +30,11 @@ class Color(base.BaseObject):
 
 
 class Offset(base.BaseObject):
-    pass
+
+    def _validate_append(self, obj):
+        from shapes_2d import Shape2dObject
+        if not isinstance(obj, Shape2dObject):
+            raise TypeError("Appended object must be a instance of Shape2dObject.")
 
 
 class Hull(base.BaseObject):
