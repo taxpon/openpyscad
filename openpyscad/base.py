@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from modifier import ModifierMixin
+from modifiers import ModifierMixin
 
-__all__ = ["_Empty", "Union", "Difference", "Intersection",
-           "Translate", "Rotate", "Scale", "Resize",
-           "Sphere", "Cube", "Cylinder", "Polyhedron"]
+__all__ = ["Empty", "BaseObject", "set_value"]
 
 
 class MetaObject(type):
@@ -19,14 +17,30 @@ class MetaObject(type):
         "rotate": ("rotate", ("a", "v"), True),
         "scale": ("scale", ("v", ), True),
         "resize": ("resize", ("newsize", "auto"), True),
+        "mirror": ("mirror", ("__axis", ), True),
+        "color": ("color", ("__color", "a"), True),
+        "offset": ("offset", ("r", "chamfer"), True),
+        "minkowski": ("minkowski", (), True),
+        "hull": ("hull", (), True),
+        # 2D
+        "circle": ("circle", ("r", "d"), False),
+        "square": ("square", ("size", "center"), False),
+        "polygon": ("polygon", ("points", "paths", "convexity"), False),
+        "text": ("text",
+                 ("text", "size", "font", "halign", "valign", "spacing",
+                  "direction", "language", "script", "_fn"),
+                 False),
         # 3D
         "sphere": ("sphere", ("r", "d", "_fa", "_fs", "_fn"), False),
         "cube": ("cube", ("size", "center"), False),
         "cylinder": ("cylinder",
-                     ("h", "r", "r1", "r2", "d", "d1", "d2", "center", "_fa", "_fs", "_fn"),
+                     ("h", "r", "r1", "r2", "d", "d1", "d2",
+                      "center", "_fa", "_fs", "_fn"),
                      False
                      ),
-        "polyhedron": ("polyhedron", ("points", "triangles", "faces", "convexity"), False)
+        "polyhedron": ("polyhedron",
+                       ("points", "triangles", "faces", "convexity"),
+                       False)
     }
 
     def __new__(mcs, name, bases, attr):
@@ -57,15 +71,40 @@ class _BaseObject(ModifierMixin, object):
 
         self.children = []
 
+    def _retrieve_value(self, name):
+        val = getattr(self, name)
+        if val is None:
+            return None
+        if isinstance(val, (str, unicode)):
+            return "\"{}\"".format(val)
+        return "{}".format(val)
+
     def _get_params(self):
         valid_keys = filter(lambda x: getattr(self, x) is not None, self._properties)
 
+        def is_no_keyword_args(arg_name):
+            if arg_name[0] == "_" and arg_name[1] == "_":
+                return True
+            return False
+
+        def is_keyword_args(arg_name):
+            return not is_no_keyword_args(arg_name)
+
         def convert_special_args(arg_name):
             if arg_name[0] == "_":
-                return "$" + arg_name[1:]
+                if arg_name[1] != "_":
+                    return "$" + arg_name[1:]
             return arg_name
 
-        return " ".join(map(lambda x: "{}={},".format(convert_special_args(x), getattr(self, x)), valid_keys))[:-1]
+        args = ""
+        # no-keyword args
+        no_kw_args = filter(lambda x: is_no_keyword_args(x), valid_keys)
+        args += " ".join(map(lambda x: "{},".format(self._retrieve_value(x)), no_kw_args))[:-1]
+
+        # keyword args
+        kw_args = filter(lambda x: is_keyword_args(x), valid_keys)
+        args += " ".join(map(lambda x: "{}={},".format(convert_special_args(x), getattr(self, x)), kw_args))[:-1]
+        return args
 
     def _get_children_content(self, indent_level=0):
         _content = ""
@@ -88,7 +127,11 @@ class _BaseObject(ModifierMixin, object):
         if not self.has_child:
             raise TypeError("This object can not have any children.")
         else:
-            self.children.append(obj)
+            if isinstance(obj, (list, tuple, set)):
+                for o in obj:
+                    self.append(o)
+            else:
+                self.children.append(obj)
             return self
 
     def dump(self, fp):
@@ -103,9 +146,11 @@ class _BaseObject(ModifierMixin, object):
             content=self._get_content(indent_level)
         )
 
-    def write(self, filename):
+    def write(self, filename, with_print=False):
         with open(filename, "w") as fp:
             self.dump(fp)
+        if with_print:
+            print(self.dumps())
 
     def clone(self):
         import copy
@@ -115,6 +160,7 @@ class _BaseObject(ModifierMixin, object):
         return self.dumps()
 
     def __add__(self, other):
+        from boolean import Union
         if isinstance(self, _Empty):
             return other
 
@@ -125,6 +171,7 @@ class _BaseObject(ModifierMixin, object):
             return Union().append(self).append(other)
 
     def __sub__(self, other):
+        from boolean import Difference
         if isinstance(self, _Empty):
             return other
 
@@ -135,6 +182,7 @@ class _BaseObject(ModifierMixin, object):
             return Difference().append(self).append(other)
 
     def __and__(self, other):
+        from boolean import Intersection
         if isinstance(self, _Empty):
             return other
 
@@ -145,81 +193,39 @@ class _BaseObject(ModifierMixin, object):
             return Intersection().append(self).append(other)
 
     def translate(self, *args, **kwargs):
+        from transformations import Translate
         return Translate(*args, **kwargs).append(self)
 
     def rotate(self, *args, **kwargs):
+        from transformations import Rotate
         return Rotate(*args, **kwargs).append(self)
 
     def scale(self, *args, **kwargs):
+        from transformations import Scale
         return Scale(*args, **kwargs).append(self)
 
     def resize(self, *args, **kwargs):
+        from transformations import Resize
         return Resize(*args, **kwargs).append(self)
+
+    def color(self, *args, **kwargs):
+        from transformations import Color
+        return Color(*args, **kwargs).append(self)
+
+BaseObject = _BaseObject
 
 
 class _Empty(_BaseObject):
     pass
 
-
-# Boolean
-class Union(_BaseObject):
-    pass
+Empty = _Empty
 
 
-class Difference(_BaseObject):
-    pass
+def set_value(name, value):
 
+    if isinstance(value, (str, unicode)):
+        _value = "\"{}\"".format(value)
+    else:
+        _value = "{}".format(value)
 
-class Intersection(_BaseObject):
-    pass
-
-
-# Transformations
-class Translate(_BaseObject):
-    pass
-
-
-class Rotate(_BaseObject):
-    pass
-
-
-class Scale(_BaseObject):
-    pass
-
-
-class Resize(_BaseObject):
-    pass
-
-
-# 3D
-class _ShapeObject(_BaseObject):
-    pass
-
-
-class Sphere(_ShapeObject):
-    pass
-
-
-class Cube(_ShapeObject):
-    pass
-
-
-class Cylinder(_ShapeObject):
-    pass
-
-
-class Polyhedron(_ShapeObject):
-    pass
-
-if __name__ == "__main__":
-
-    i = Intersection()
-    i.append(Cube([20, 20, 15]))
-    i.append(Sphere(10, _fn=40))
-
-    i2 = Cube([20, 20, 15]) & Sphere(10, _fn=40)
-    # base = Cube([20, 20, 15]) + Sphere(10, _fn=40)
-    # print base
-    # base.write('test.scad')
-    print i2
-    i2.write("test.scad")
+    return "{name}={value};".format(name=name, value=_value)
