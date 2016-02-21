@@ -83,8 +83,18 @@ class TestBaseObject(unittest.TestCase):
     def test_clone(self):
         c1 = Cube(size=10)
         c2 = c1.clone()
-
         self.assertEqual(c1.size, c2.size)
+
+    def test_equals(self):
+        c1 = Cube(size=10)
+        c2 = Cube(size=10)
+        self.assertTrue(c1.equals(c2))
+
+        c2 = Cylinder(10)
+        self.assertFalse(c1.equals(c2))
+
+        c2 = Cube(size=20)
+        self.assertFalse(c1.equals(c2))
 
     def test_str(self):
         c1 = Cube(size=10)
@@ -93,41 +103,44 @@ class TestBaseObject(unittest.TestCase):
     def test_add(self):
         o = Empty()
         c1 = Cube(10)
-        self.assertEqual(o + c1, c1)
+        self.assertTrue((o + c1).equals(c1))
         
         u = Union()
         u1 = u + c1
-        self.assertEqual(u1.children, [c1])
+        self.assertTrue(u1.children[0].equals(c1))
         
         c2 = Cube(20)
         u2 = c1 + c2
-        self.assertEqual(u2.children, [c1, c2])
+        self.assertTrue(u2.children[0].equals(c1))
+        self.assertTrue(u2.children[1].equals(c2))
 
     def test_sub(self):
         o = Empty()
         c1 = Cube(10)
-        self.assertEqual(o - c1, c1)
+        self.assertTrue((o - c1).equals(c1))
 
         d = Difference()
         d1 = d - c1
-        self.assertEqual(d1.children, [c1])
+        self.assertTrue(d1.children[0].equals(c1))
 
         c2 = Cube(20)
         d2 = c1 - c2
-        self.assertEqual(d2.children, [c1, c2])
+        self.assertTrue(d2.children[0].equals(c1))
+        self.assertTrue(d2.children[1].equals(c2))
 
     def test_and(self):
         o = Empty()
         c1 = Cube(10)
-        self.assertEqual(o & c1, c1)
+        self.assertTrue((o & c1).equals(c1))
 
         i = Intersection()
         i1 = i & c1
-        self.assertEqual(i1.children, [c1])
+        self.assertTrue(i1.children[0].equals(c1))
 
         c2 = Cube(20)
         i2 = c1 & c2
-        self.assertEqual(i2.children, [c1, c2])
+        self.assertTrue(i2.children[0].equals(c1))
+        self.assertTrue(i2.children[1].equals(c2))
 
     def test_translate(self):
         o = Cube(10)

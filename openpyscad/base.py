@@ -161,7 +161,16 @@ class _BaseObject(ModifierMixin, object):
 
     def clone(self):
         import copy
-        return copy.copy(self)
+        return copy.deepcopy(self)
+
+    def equals(self, other):
+        for prop in self._properties:
+            if self.__class__.__name__ != other.__class__.__name__:
+                return False
+
+            if getattr(self, prop) != getattr(other, prop):
+                return False
+        return True
 
     def __str__(self):
         return self.dumps()
@@ -169,33 +178,36 @@ class _BaseObject(ModifierMixin, object):
     def __add__(self, other):
         from boolean import Union
         if isinstance(self, _Empty):
-            return other
+            return other.clone()
 
         elif isinstance(self, Union):
-            self.append(other)
-            return self
+            cloned = self.clone()
+            cloned.append(other)
+            return cloned
         else:
             return Union().append(self).append(other)
 
     def __sub__(self, other):
         from boolean import Difference
         if isinstance(self, _Empty):
-            return other
+            return other.clone()
 
         elif isinstance(self, Difference):
-            self.append(other)
-            return self
+            cloned = self.clone()
+            cloned.append(other)
+            return cloned
         else:
             return Difference().append(self).append(other)
 
     def __and__(self, other):
         from boolean import Intersection
         if isinstance(self, _Empty):
-            return other
+            return other.clone()
 
         elif isinstance(self, Intersection):
-            self.append(other)
-            return self
+            cloned = self.clone()
+            cloned.append(other)
+            return cloned
         else:
             return Intersection().append(self).append(other)
 
