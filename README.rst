@@ -61,9 +61,9 @@ Python:
     )
 
 
-Generated OpenSCAD code: openscad
+Generated OpenSCAD code:
 
-.. code-block::
+.. code-block:: openscad
 
     sphere(r=10, d=10, $fn=100);
     cube(size=[10, 10, 10]);
@@ -102,7 +102,7 @@ Python:
     i.append(Cube[20, 10, 10])
     i.append(Cube[10, 20, 10])
 
-Generated OpenSCAD code: openscad
+Generated OpenSCAD code:
 
 .. code-block:: openscad
 
