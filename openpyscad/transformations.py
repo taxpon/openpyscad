@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import base
+import openpyscad.base as base 
 
-__all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski"]
+
+__all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski","Linear_Extrude"]
 
 
 # Transformations
@@ -32,7 +33,7 @@ class Color(base.BaseObject):
 class Offset(base.BaseObject):
 
     def _validate_append(self, obj):
-        from shapes_2d import Shape2dObject
+        from .shapes_2d import Shape2dObject
         if not isinstance(obj, Shape2dObject):
             raise TypeError("Appended object must be a instance of Shape2dObject.")
 
@@ -42,4 +43,8 @@ class Hull(base.BaseObject):
 
 
 class Minkowski(base.BaseObject):
+    pass
+
+
+class Linear_Extrude(base.BaseObject):
     pass

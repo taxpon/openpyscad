@@ -1,4 +1,6 @@
-from base import _BaseObject
+from __future__ import absolute_import
+
+from .base import _BaseObject
 
 __all__ = ["Sphere", "Cube", "Cylinder", "Polyhedron"]
 
