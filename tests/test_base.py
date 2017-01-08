@@ -198,3 +198,10 @@ class TestBaseObject(unittest.TestCase):
         o = Cube(10)
         with self.assertRaises(TypeError):
             o.offset([10, 10, 10])
+
+    def test_linear_extrude(self):
+        o = Circle(10)
+        o1 = o.linear_extrude(height=1.6)
+        self.assertTrue(isinstance(o1, Linear_Extrude))
+        self.assertEqual(o1.children, [o])
+         
