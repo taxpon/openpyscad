@@ -61,10 +61,9 @@ class TestBaseObject(unittest.TestCase):
     def test_dump(self):
         try:
             from StringIO import StringIO
-            sio = StringIO.StringIO()
         except ImportError:
             from io import StringIO
-            sio = StringIO()
+        sio = StringIO()
         c1 = Cube(size=10)
         c1.dump(sio)
         self.assertEqual(sio.getvalue(), "cube(size=10);\n")
