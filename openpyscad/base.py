@@ -80,8 +80,13 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
         val = getattr(self, name)
         if val is None:
             return None
-        if isinstance(val, (str, unicode)):
-            return "\"{}\"".format(val)
+        try:
+            if isinstance(val, (str, unicode)):
+                return "\"{}\"".format(val)
+        except:
+            if isinstance(val, (str)):
+                return "\"{}\"".format(val)
+
         return "{}".format(val)
 
     def _get_params(self):

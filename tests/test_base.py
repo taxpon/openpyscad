@@ -59,8 +59,12 @@ class TestBaseObject(unittest.TestCase):
         self.assertEqual(o.children, [c1])
 
     def test_dump(self):
-        import StringIO
-        sio = StringIO.StringIO()
+        try:
+            from StringIO import StringIO
+            sio = StringIO.StringIO()
+        except ImportError:
+            from io import StringIO
+            sio = StringIO()
         c1 = Cube(size=10)
         c1.dump(sio)
         self.assertEqual(sio.getvalue(), "cube(size=10);\n")
@@ -73,8 +77,13 @@ class TestBaseObject(unittest.TestCase):
         from mock import mock_open, patch
         c1 = Cube(size=10)
         m_open = mock_open()
-        with patch("__builtin__.open", m_open):
-            c1.write("sample", with_print=True)
+        try:
+            with patch("__builtin__.open", m_open):
+                c1.write("sample", with_print=True)
+        except:
+            with patch("builtins.open", m_open):
+                c1.write("sample", with_print=True)
+        
 
         m_open.assert_called_once_with("sample", "w")
         handle = m_open()
