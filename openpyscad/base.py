@@ -9,6 +9,7 @@ from .modifiers import ModifierMixin
 __all__ = ["Empty", "BaseObject"]
 INDENT = "    "
 
+
 class MetaObject(type):
 
     object_definition = {
@@ -26,7 +27,7 @@ class MetaObject(type):
         "offset": ("offset", ("r", "chamfer"), True),
         "minkowski": ("minkowski", (), True),
         "hull": ("hull", (), True),
-        "linear_extrude": ("linear_extrude",("height", "center", 
+        "linear_extrude": ("linear_extrude", ("height", "center",
                            "convexity", "twist", "slices", "scale"),
                            True),
         # 2D
@@ -241,7 +242,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
     def offset(self, *args, **kwargs):
         from .transformations import Offset
         return Offset(*args, **kwargs).append(self)
- 
+
     def linear_extrude(self, *args, **kwargs):
         from .transformations import Linear_Extrude
         return Linear_Extrude(*args, **kwargs).append(self)

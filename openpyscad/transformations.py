@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import openpyscad.base as base 
+import openpyscad.base as base
 
 
 __all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski", "Linear_Extrude"]
