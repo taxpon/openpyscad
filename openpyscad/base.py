@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-
 # Python 2 and 3:
 from six import with_metaclass
-
-
 
 from .modifiers import ModifierMixin
 
 __all__ = ["Empty", "BaseObject"]
 INDENT = "    "
-
 
 class MetaObject(type):
 
@@ -30,7 +26,9 @@ class MetaObject(type):
         "offset": ("offset", ("r", "chamfer"), True),
         "minkowski": ("minkowski", (), True),
         "hull": ("hull", (), True),
-        "linear_extrude": ("linear_extrude",("height", "center", "convexity", "twist", "slices", "scale"),True),
+        "linear_extrude": ("linear_extrude",("height", "center", 
+                           "convexity", "twist", "slices", "scale"),
+                           True),
         # 2D
         "circle": ("circle", ("r", "d"), False),
         "square": ("square", ("size", "center"), False),
@@ -64,8 +62,6 @@ class MetaObject(type):
 
 
 class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
-
-    #__metaclass__ = MetaObject
 
     def __init__(self, *args, **kwargs):
         super(_BaseObject, self).__init__()
@@ -217,7 +213,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             return cloned
         else:
             return Intersection().append(self).append(other)
-    
+
     def translate(self, *args, **kwargs):
         from .transformations import Translate
         return Translate(*args, **kwargs).append(self)
@@ -245,7 +241,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
     def offset(self, *args, **kwargs):
         from .transformations import Offset
         return Offset(*args, **kwargs).append(self)
-    
+ 
     def linear_extrude(self, *args, **kwargs):
         from .transformations import Linear_Extrude
         return Linear_Extrude(*args, **kwargs).append(self)

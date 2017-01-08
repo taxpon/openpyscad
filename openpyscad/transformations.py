@@ -2,7 +2,7 @@
 import openpyscad.base as base 
 
 
-__all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski","Linear_Extrude"]
+__all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski", "Linear_Extrude"]
 
 
 # Transformations
