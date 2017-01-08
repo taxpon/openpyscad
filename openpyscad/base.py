@@ -63,7 +63,6 @@ class MetaObject(type):
         return type.__new__(mcs, name, bases, attr)
 
 
-#class _BaseObject(ModifierMixin, object, metaclass=MetaObject):
 class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
     #__metaclass__ = MetaObject
