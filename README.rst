@@ -8,10 +8,10 @@ OpenPySCAD
     :target: https://coveralls.io/github/taxpon/openpyscad?branch=master
 
 Python library to generate `OpenSCAD <http://www.openscad.org/>`_ source code. This library provides intuitive interface when you handle 3D data.
-
+OpenPySCAD supports both python2(2.7) and python3(3.4-).
 
 Usage
--------
+-----
 
 1. Install openpyscad via pip
 
