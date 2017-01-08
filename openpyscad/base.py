@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
-from modifiers import ModifierMixin
+# Python 2 and 3:
+from six import with_metaclass
+
+from .modifiers import ModifierMixin
 
 __all__ = ["Empty", "BaseObject"]
 INDENT = "    "
@@ -23,6 +27,9 @@ class MetaObject(type):
         "offset": ("offset", ("r", "chamfer"), True),
         "minkowski": ("minkowski", (), True),
         "hull": ("hull", (), True),
+        "linear_extrude": ("linear_extrude", ("height", "center",
+                           "convexity", "twist", "slices", "scale"),
+                           True),
         # 2D
         "circle": ("circle", ("r", "d"), False),
         "square": ("square", ("size", "center"), False),
@@ -45,7 +52,6 @@ class MetaObject(type):
     }
 
     def __new__(mcs, name, bases, attr):
-
         if name[0] != "_":
             definition = MetaObject.object_definition[name.lower()]
             attr['_name'] = definition[0]
@@ -56,9 +62,7 @@ class MetaObject(type):
         return type.__new__(mcs, name, bases, attr)
 
 
-class _BaseObject(ModifierMixin, object):
-
-    __metaclass__ = MetaObject
+class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
     def __init__(self, *args, **kwargs):
         super(_BaseObject, self).__init__()
@@ -76,12 +80,17 @@ class _BaseObject(ModifierMixin, object):
         val = getattr(self, name)
         if val is None:
             return None
-        if isinstance(val, (str, unicode)):
-            return "\"{}\"".format(val)
+        try:
+            if isinstance(val, (str, unicode)):
+                return "\"{}\"".format(val)
+        except:
+            if isinstance(val, (str)):
+                return "\"{}\"".format(val)
+
         return "{}".format(val)
 
     def _get_params(self):
-        valid_keys = filter(lambda x: getattr(self, x) is not None, self._properties)
+        valid_keys = list(filter(lambda x: getattr(self, x) is not None, self._properties))
 
         def is_no_keyword_args(arg_name):
             if arg_name[0] == "_" and arg_name[1] == "_":
@@ -99,7 +108,7 @@ class _BaseObject(ModifierMixin, object):
 
         args = ""
         # no-keyword args
-        no_kw_args = filter(lambda x: is_no_keyword_args(x), valid_keys)
+        no_kw_args = list(filter(lambda x: is_no_keyword_args(x), valid_keys))
         args += " ".join(map(lambda x: "{},".format(self._retrieve_value(x)), no_kw_args))[:-1]
 
         # keyword args
@@ -176,7 +185,7 @@ class _BaseObject(ModifierMixin, object):
         return self.dumps()
 
     def __add__(self, other):
-        from boolean import Union
+        from .boolean import Union
         if isinstance(self, _Empty):
             return other.clone()
 
@@ -188,7 +197,7 @@ class _BaseObject(ModifierMixin, object):
             return Union().append(self).append(other)
 
     def __sub__(self, other):
-        from boolean import Difference
+        from .boolean import Difference
         if isinstance(self, _Empty):
             return other.clone()
 
@@ -200,7 +209,7 @@ class _BaseObject(ModifierMixin, object):
             return Difference().append(self).append(other)
 
     def __and__(self, other):
-        from boolean import Intersection
+        from .boolean import Intersection
         if isinstance(self, _Empty):
             return other.clone()
 
@@ -212,32 +221,37 @@ class _BaseObject(ModifierMixin, object):
             return Intersection().append(self).append(other)
 
     def translate(self, *args, **kwargs):
-        from transformations import Translate
+        from .transformations import Translate
         return Translate(*args, **kwargs).append(self)
 
     def rotate(self, *args, **kwargs):
-        from transformations import Rotate
+        from .transformations import Rotate
         return Rotate(*args, **kwargs).append(self)
 
     def scale(self, *args, **kwargs):
-        from transformations import Scale
+        from .transformations import Scale
         return Scale(*args, **kwargs).append(self)
 
     def resize(self, *args, **kwargs):
-        from transformations import Resize
+        from .transformations import Resize
         return Resize(*args, **kwargs).append(self)
 
     def mirror(self, *args, **kwargs):
-        from transformations import Mirror
+        from .transformations import Mirror
         return Mirror(*args, **kwargs).append(self)
 
     def color(self, *args, **kwargs):
-        from transformations import Color
+        from .transformations import Color
         return Color(*args, **kwargs).append(self)
 
     def offset(self, *args, **kwargs):
-        from transformations import Offset
+        from .transformations import Offset
         return Offset(*args, **kwargs).append(self)
+
+    def linear_extrude(self, *args, **kwargs):
+        from .transformations import Linear_Extrude
+        return Linear_Extrude(*args, **kwargs).append(self)
+
 
 BaseObject = _BaseObject
 
