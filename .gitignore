@@ -59,5 +59,10 @@ docs/_build/
 target/
 
 # Created by .ignore support plugin (hsz.mobi)
-
 .idea
+
+# Created by VIM
+.*.swp
+
+# Created by nosetests
+cover/ 
