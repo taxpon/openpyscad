@@ -7,6 +7,7 @@ from .shapes_3d import *
 from .shapes_2d import *
 from .boolean import *
 from .transformations import *
+from .custom2dshapes import Custom2dShapes
 
 __name__ = "OpenPySCAD"
 __version__ = "0.1.2"

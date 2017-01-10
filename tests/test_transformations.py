@@ -13,3 +13,13 @@ class TestOffset(unittest.TestCase):
         c2 = Cube(10)
         with self.assertRaises(TypeError):
             offset.append(c2)
+
+class TestLinearExtrude(unittest.TestCase):
+
+    def test_validate_append_linear_extrude(self):
+        c1 = Circle(10)
+        c2 = c1.linear_extrude(height=1.4)
+        
+        c3 = Cube(10)
+        with self.assertRaises(TypeError):
+            c3.linear_extrude(height=1.2)
