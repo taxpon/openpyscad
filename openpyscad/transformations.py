@@ -47,4 +47,8 @@ class Minkowski(base.BaseObject):
 
 
 class Linear_Extrude(base.BaseObject):
-    pass
+    def _validate_append(self, obj):
+        from .shapes_2d import Shape2dObject
+        if not isinstance(obj, Shape2dObject):
+            raise TypeError("Appended object must be a instance of Shape2dObject.")
+    
