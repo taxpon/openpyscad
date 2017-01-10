@@ -15,6 +15,7 @@ class Custom2dShapes(object):
         regular_poly = Polygon(points)
         return(regular_poly)
 
+    @staticmethod
     def star(num, radii):
         points = list()
         for i in range(num):
