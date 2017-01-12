@@ -39,7 +39,7 @@ class MetaObject(type):
                   "direction", "language", "script", "_fn"),
                  False),
         # 3D
-        "sphere": ("sphere", ("r", "d", "_fa", "_fs", "_fn"), False),
+        "sphere": ("sphere", ("r", "d", "center", "_fa", "_fs", "_fn"), False),
         "cube": ("cube", ("size", "center"), False),
         "cylinder": ("cylinder",
                      ("h", "r", "r1", "r2", "d", "d1", "d2",
@@ -158,7 +158,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             indent=INDENT * indent_level,
             prefix=self.mod.get_prefix(),
             op_name=self._name,
-            params=self._get_params(),
+            params=self._get_params().replace('True','true'),
             content=self._get_content(indent_level)
         )
 
