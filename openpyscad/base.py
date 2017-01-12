@@ -30,6 +30,8 @@ class MetaObject(type):
         "linear_extrude": ("linear_extrude", ("height", "center",
                            "convexity", "twist", "slices", "scale"),
                            True),
+        "rotate_extrude": ("rotate_extrude", ("angle", "convexity",
+                           "_fn"), True),
         # 2D
         "circle": ("circle", ("r", "d"), False),
         "square": ("square", ("size", "center"), False),
@@ -251,6 +253,10 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
     def linear_extrude(self, *args, **kwargs):
         from .transformations import Linear_Extrude
         return Linear_Extrude(*args, **kwargs).append(self)
+
+    def rotate_extrude(self, *args, **kwargs):
+        from .transformations import Rotate_Extrude
+        return Rotate_Extrude(*args, **kwargs).append(self)
 
 
 BaseObject = _BaseObject

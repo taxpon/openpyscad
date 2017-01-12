@@ -4,33 +4,37 @@ import openpyscad.base as base
 
 __all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski", "Linear_Extrude"]
 
+class _Transformation(base.BaseObject):
+    pass
+
+Transformation = _Transformation
 
 # Transformations
-class Translate(base.BaseObject):
+class Translate(_Transformation):
     pass
 
 
-class Rotate(base.BaseObject):
+class Rotate(_Transformation):
     pass
 
 
-class Scale(base.BaseObject):
+class Scale(_Transformation):
     pass
 
 
-class Resize(base.BaseObject):
+class Resize(_Transformation):
     pass
 
 
-class Mirror(base.BaseObject):
+class Mirror(_Transformation):
     pass
 
 
-class Color(base.BaseObject):
+class Color(_Transformation):
     pass
 
 
-class Offset(base.BaseObject):
+class Offset(_Transformation):
 
     def _validate_append(self, obj):
         from .shapes_2d import Shape2dObject
@@ -38,16 +42,25 @@ class Offset(base.BaseObject):
             raise TypeError("Appended object must be a instance of Shape2dObject.")
 
 
-class Hull(base.BaseObject):
+class Hull(_Transformation):
     pass
 
 
-class Minkowski(base.BaseObject):
+class Minkowski(_Transformation):
     pass
 
 
-class Linear_Extrude(base.BaseObject):
+class Linear_Extrude(_Transformation):
     def _validate_append(self, obj):
         from .shapes_2d import Shape2dObject
-        if not isinstance(obj, (Shape2dObject, transformations)):
+        if not isinstance(obj, (Shape2dObject, Transformation)):
             raise TypeError("Appended object must be a instance of Shape2dObject.")
+
+
+
+class Rotate_Extrude(_Transformation):
+    def _validate_append(self, obj):
+        from .shapes_2d import Shape2dObject
+        if not isinstance(obj, (Shape2dObject, Transformation)):
+            raise TypeError("Appended object must be a instance of Shape2dObject.")
+
