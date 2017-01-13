@@ -253,11 +253,11 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
     def minkowski(self, *args, **kwargs):
         from .transformations import Minkowski
         return Minkowski(*args, **kwargs).append(self)
-    
+
     def hull(self, *args, **kwargs):
         from .transformations import Hull
         return Hull(*args, **kwargs).append(self)
-    
+
     def linear_extrude(self, *args, **kwargs):
         from .transformations import Linear_Extrude
         return Linear_Extrude(*args, **kwargs).append(self)
