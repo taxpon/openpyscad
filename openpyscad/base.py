@@ -160,7 +160,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             indent=INDENT * indent_level,
             prefix=self.mod.get_prefix(),
             op_name=self._name,
-            params=self._get_params().replace('True','true'),
+            params=self._get_params().replace('True', 'true'),
             content=self._get_content(indent_level)
         )
 

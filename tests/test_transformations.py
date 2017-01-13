@@ -23,3 +23,14 @@ class TestLinearExtrude(unittest.TestCase):
         c3 = Cube(10)
         with self.assertRaises(TypeError):
             c3.linear_extrude(height=1.2)
+
+class TestRotateExtrude(unittest.TestCase):
+
+    def test_validate_append_rotate_extrude(self):
+        c1 = Circle(10)
+        c2 = c1.rotate_extrude(angle=90)
+        
+        c3 = Cube(10)
+        with self.assertRaises(TypeError):
+            c3.rotate_extrude(angle=90)
+
