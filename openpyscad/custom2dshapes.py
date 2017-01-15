@@ -1,6 +1,6 @@
 from math import cos, sin, pi
 
-from openpyscad.shapes_2d import *
+import openpyscad as ops
 
 
 class Custom2dShapes(object):
@@ -12,7 +12,7 @@ class Custom2dShapes(object):
             a_deg = i * 360 / num
             a_rad = a_deg * 2 * pi / 360
             points += [[r * cos(a_rad), r * sin(a_rad)]]
-        regular_poly = Polygon(points)
+        regular_poly = ops.Polygon(points)
         return(regular_poly)
 
     @staticmethod
@@ -23,5 +23,5 @@ class Custom2dShapes(object):
             a_rad = a_deg * 2 * pi / 360
             r = radii[i % len(radii)]
             points += [[r * cos(a_rad), r * sin(a_rad)]]
-            star_object = Polygon(points)
+            star_object = ops.Polygon(points)
         return(star_object)

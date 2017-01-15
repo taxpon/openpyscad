@@ -6,7 +6,7 @@ from six import with_metaclass
 
 from .modifiers import ModifierMixin
 
-__all__ = ["Empty", "BaseObject"]
+__all__ = ["Empty", "BaseObject", "Scad"]
 INDENT = "    "
 
 
@@ -33,7 +33,7 @@ class MetaObject(type):
         "rotate_extrude": ("rotate_extrude", ("angle", "convexity",
                            "_fn"), True),
         # 2D
-        "circle": ("circle", ("r", "d"), False),
+        "circle": ("circle", ("r", "d", "_fn"), False),
         "square": ("square", ("size", "center"), False),
         "polygon": ("polygon", ("points", "paths", "convexity"), False),
         "text": ("text",
@@ -48,6 +48,7 @@ class MetaObject(type):
                       "center", "_fa", "_fs", "_fn"),
                      False
                      ),
+        "scad": ("scad", ("scadfile", "version"), False),
         "polyhedron": ("polyhedron",
                        ("points", "triangles", "faces", "convexity"),
                        False)
@@ -108,6 +109,16 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
                     return "$" + arg_name[1:]
             return arg_name
 
+        def _get_attr(self, x):
+            if x == 'scadfile':
+                scadfile = getattr(self, x)
+                with open(scadfile) as f:
+                    content = f.readlines()
+                    content = ''.join(content).rstrip('\n').rstrip(';')
+                    return(content)
+            else:
+                return(getattr(self, x))
+
         args = ""
         # no-keyword args
         no_kw_args = list(filter(lambda x: is_no_keyword_args(x), valid_keys))
@@ -115,7 +126,8 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
         # keyword args
         kw_args = filter(lambda x: is_keyword_args(x), valid_keys)
-        args += " ".join(map(lambda x: "{}={},".format(convert_special_args(x), getattr(self, x)), kw_args))[:-1]
+        args += " ".join(map(lambda x: "{}={},".format(convert_special_args(x), _get_attr(self, x)), kw_args))[:-1]
+        args = args.replace('scadfile=', '')
         return args
 
     def _get_children_content(self, indent_level=0):
@@ -156,13 +168,20 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
         fp.write(self.dumps())
 
     def dumps(self, indent_level=0):
-        return "{indent}{prefix}{op_name}({params}){content};\n".format(
-            indent=INDENT * indent_level,
-            prefix=self.mod.get_prefix(),
-            op_name=self._name,
-            params=self._get_params().replace('True', 'true'),
-            content=self._get_content(indent_level)
-        )
+        if self._name == "scad":
+            return "{indent}{prefix}{params};\n".format(
+                indent=INDENT * indent_level,
+                prefix=self.mod.get_prefix(),
+                params=self._get_params()
+            )
+        else:
+            return "{indent}{prefix}{op_name}({params}){content};\n".format(
+                indent=INDENT * indent_level,
+                prefix=self.mod.get_prefix(),
+                op_name=self._name,
+                params=self._get_params().replace('True', 'true'),
+                content=self._get_content(indent_level)
+            )
 
     def write(self, filename, with_print=False):
         with open(filename, "w") as fp:
@@ -274,3 +293,7 @@ class _Empty(_BaseObject):
     pass
 
 Empty = _Empty
+
+
+class Scad(_BaseObject):
+    pass

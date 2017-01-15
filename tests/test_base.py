@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+import os 
 from openpyscad import *
 
 
@@ -204,4 +205,15 @@ class TestBaseObject(unittest.TestCase):
         o1 = o.linear_extrude(height=1.6)
         self.assertTrue(isinstance(o1, Linear_Extrude))
         self.assertEqual(o1.children, [o])
-         
+    
+    def test_rotate_extrude(self):
+        o = Circle(10)
+        o1 = o.rotate_extrude()
+        self.assertTrue(isinstance(o1, Rotate_Extrude))
+        self.assertEqual(o1.children, [o])
+    
+    def test_scad(self):
+        o = Sphere(3)
+        sc = Scad(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.scad'))
+        osc = o + sc 
+        self.assertTrue('offset' in osc.dumps())
