@@ -42,6 +42,7 @@ class MetaObject(type):
                  ("text", "size", "font", "halign", "valign", "spacing",
                   "direction", "language", "script", "_fn"),
                  False),
+        "surface": ("surface", ("file", "center", "invert", "convexity"), False),
         # 3D
         "sphere": ("sphere", ("r", "d", "center", "_fa", "_fs", "_fn"), False),
         "cube": ("cube", ("size", "center"), False),
