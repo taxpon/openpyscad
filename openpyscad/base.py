@@ -3,6 +3,8 @@ from __future__ import absolute_import
 
 # Python 2 and 3:
 from six import with_metaclass
+import os
+
 
 from .modifiers import ModifierMixin
 
@@ -69,6 +71,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
     def __init__(self, *args, **kwargs):
         super(_BaseObject, self).__init__()
+        self.modules = list()
         for k, v in kwargs.items():
             if hasattr(self.__class__, k):
                 setattr(self, k, v)
@@ -92,7 +95,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
         return "{}".format(val)
 
-    def _get_params(self):
+    def _get_params(self, fp):
         valid_keys = list(filter(lambda x: getattr(self, x) is not None, self._properties))
 
         def is_no_keyword_args(arg_name):
@@ -109,12 +112,23 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
                     return "$" + arg_name[1:]
             return arg_name
 
-        def _get_attr(self, x):
+        def _get_attr(self, x, fp):
             if x == 'scadfile':
                 scadfile = getattr(self, x)
+                def rename_scadfile(scadfile):
+                    sf = ''.join(os.path.basename(scadfile).split('.')[:-1])
+                    scadfile_renamed = sf.lower().strip('_').strip('-') 
+                    return(scadfile_renamed)
                 with open(scadfile) as f:
                     content = f.readlines()
-                    content = ''.join(content).rstrip('\n').rstrip(';')
+                    content = ''.join(content).rstrip('\n') 
+                    sc = rename_scadfile(scadfile) 
+                    module = 'module {sc}() {{{content};}}\n'.format(**{'content': content, 'sc': sc})
+                    module = module.replace(';;',';')
+                    self.modules.append(module)
+                    if fp is not None:
+                        fp.write(module)
+                    content = '{}()'.format(sc)
                     return(content)
             else:
                 return(getattr(self, x))
@@ -126,24 +140,24 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
         # keyword args
         kw_args = filter(lambda x: is_keyword_args(x), valid_keys)
-        args += " ".join(map(lambda x: "{}={},".format(convert_special_args(x), _get_attr(self, x)), kw_args))[:-1]
+        args += " ".join(map(lambda x: "{}={},".format(convert_special_args(x), _get_attr(self, x, fp)), kw_args))[:-1]
         args = args.replace('scadfile=', '')
         return args
 
-    def _get_children_content(self, indent_level=0):
+    def _get_children_content(self, indent_level=0, fp=None):
         _content = ""
         if len(self.children) > 0:
             for child in self.children:
-                _content += child.dumps(indent_level)
+                _content += child.dumps(indent_level, fp)
 
         return _content
 
-    def _get_content(self, indent_level=0):
+    def _get_content(self, indent_level=0, fp=None):
         if len(self.children) == 0:
             return ""
         else:
             return "{{\n{children}{indent}}}".format(
-                children=self._get_children_content(indent_level + 1),
+                children=self._get_children_content(indent_level + 1, fp=fp),
                 indent=INDENT * indent_level
             )
 
@@ -165,22 +179,23 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             return self
 
     def dump(self, fp):
-        fp.write(self.dumps())
+        dumps = self.dumps(fp=fp)
+        fp.write(dumps)
 
-    def dumps(self, indent_level=0):
+    def dumps(self, indent_level=0, fp=None):
         if self._name == "scad":
             return "{indent}{prefix}{params};\n".format(
                 indent=INDENT * indent_level,
                 prefix=self.mod.get_prefix(),
-                params=self._get_params()
+                params=self._get_params(fp).replace('True', 'true') 
             )
         else:
             return "{indent}{prefix}{op_name}({params}){content};\n".format(
                 indent=INDENT * indent_level,
                 prefix=self.mod.get_prefix(),
                 op_name=self._name,
-                params=self._get_params().replace('True', 'true'),
-                content=self._get_content(indent_level)
+                params=self._get_params(fp).replace('True', 'true'),
+                content=self._get_content(indent_level, fp=fp)
             )
 
     def write(self, filename, with_print=False):
