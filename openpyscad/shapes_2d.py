@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from .base import _BaseObject
 
-__all__ = ["Circle", "Square", "Polygon", "Text", "Surface"]
+__all__ = ["Circle", "Square", "Polygon", "Text"]
 
 
 class _Shape2dObject(_BaseObject):
@@ -24,8 +24,4 @@ class Polygon(_Shape2dObject):
 
 
 class Text(_Shape2dObject):
-    pass
-
-
-class Surface(_Shape2dObject):
     pass
