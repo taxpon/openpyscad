@@ -8,7 +8,7 @@ import os
 
 from .modifiers import ModifierMixin
 
-__all__ = ["Empty", "BaseObject", "Scad"]
+__all__ = ["Empty", "BaseObject", "Scad", "Import"]
 INDENT = "    "
 
 
@@ -51,6 +51,7 @@ class MetaObject(type):
                      False
                      ),
         "scad": ("scad", ("scadfile", "version"), False),
+        "import": ("import", ("file", "convexity"), False),
         "polyhedron": ("polyhedron",
                        ("points", "triangles", "faces", "convexity"),
                        False)
@@ -131,6 +132,13 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
                         fp.write(module)
                     content = '{}()'.format(sc)
                     return(content)
+            elif x == 'file':
+                content = getattr(self, x)
+                if not content.startswith('"'):
+                    content = '"' + content
+                if not content.endswith('"'):
+                    content = content + '"'
+                return(content)
             else:
                 return(getattr(self, x))
 
@@ -312,4 +320,8 @@ Empty = _Empty
 
 
 class Scad(_BaseObject):
+    pass
+
+
+class Import(_BaseObject):
     pass
