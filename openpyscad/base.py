@@ -115,16 +115,17 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
         def _get_attr(self, x, fp):
             if x == 'scadfile':
                 scadfile = getattr(self, x)
+
                 def rename_scadfile(scadfile):
                     sf = ''.join(os.path.basename(scadfile).split('.')[:-1])
-                    scadfile_renamed = sf.lower().strip('_').strip('-') 
+                    scadfile_renamed = sf.lower().strip('_').strip('-')
                     return(scadfile_renamed)
                 with open(scadfile) as f:
                     content = f.readlines()
-                    content = ''.join(content).rstrip('\n') 
-                    sc = rename_scadfile(scadfile) 
+                    content = ''.join(content).rstrip('\n')
+                    sc = rename_scadfile(scadfile)
                     module = 'module {sc}() {{{content};}}\n'.format(**{'content': content, 'sc': sc})
-                    module = module.replace(';;',';')
+                    module = module.replace(';;', ';')
                     self.modules.append(module)
                     if fp is not None:
                         fp.write(module)
@@ -187,7 +188,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             return "{indent}{prefix}{params};\n".format(
                 indent=INDENT * indent_level,
                 prefix=self.mod.get_prefix(),
-                params=self._get_params(fp).replace('True', 'true') 
+                params=self._get_params(fp).replace('True', 'true')
             )
         else:
             return "{indent}{prefix}{op_name}({params}){content};\n".format(
