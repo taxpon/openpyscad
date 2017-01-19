@@ -96,7 +96,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
         return "{}".format(val)
 
-    def _get_params(self, fp):
+    def _get_params(self, fp=None):
         valid_keys = list(filter(lambda x: getattr(self, x) is not None, self._properties))
 
         def is_no_keyword_args(arg_name):
