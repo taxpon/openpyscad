@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from .base import _BaseObject
 
-__all__ = ["Sphere", "Cube", "Cylinder", "Polyhedron"]
+__all__ = ["Sphere", "Cube", "Cylinder", "Polyhedron", "Surface"]
 
 
 # 3D
@@ -23,4 +23,8 @@ class Cylinder(_Shape3dObject):
 
 
 class Polyhedron(_Shape3dObject):
+    pass
+
+
+class Surface(_Shape3dObject):
     pass

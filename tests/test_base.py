@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+import os 
 from openpyscad import *
 
 
@@ -199,9 +200,45 @@ class TestBaseObject(unittest.TestCase):
         with self.assertRaises(TypeError):
             o.offset([10, 10, 10])
 
+    def test_hull(self):
+        c = Cube(10)
+        s = Sphere(3)
+        s = s.translate([8, 0, 0])
+        h = (c + s).hull()
+        self.assertTrue('hull' in h.dumps())
+
+    def test_minkowski(self):
+        c = Cube(10)
+        s = Sphere(3)
+        s = s.translate([8, 0, 0]) 
+        h = (c + s).minkowski()
+        self.assertTrue('minkowski' in h.dumps())
+
     def test_linear_extrude(self):
         o = Circle(10)
         o1 = o.linear_extrude(height=1.6)
         self.assertTrue(isinstance(o1, Linear_Extrude))
         self.assertEqual(o1.children, [o])
-         
+    
+    def test_rotate_extrude(self):
+        o = Circle(10)
+        o1 = o.rotate_extrude()
+        self.assertTrue(isinstance(o1, Rotate_Extrude))
+        self.assertEqual(o1.children, [o])
+    
+    def test_scad_write(self):
+        sc = Scad(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.scad')) 
+        self.assertTrue('example' in sc.dumps())
+        sc.write('example_module.scad')
+
+    def test_scad(self):
+        o = Sphere(3)
+        sc = Scad(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.scad'))
+        osc = o + sc 
+        self.assertTrue('example' in osc.dumps())
+
+    def test_import(self):
+        o = Sphere(3)
+        sc = Import(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.stl'))
+        osc = o + sc 
+        self.assertTrue('example.stl' in osc.dumps())
