@@ -216,4 +216,10 @@ class TestBaseObject(unittest.TestCase):
         o = Sphere(3)
         sc = Scad(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.scad'))
         osc = o + sc 
-        self.assertTrue('offset' in osc.dumps())
+        self.assertTrue('example' in osc.dumps())
+
+    def test_import(self):
+        o = Sphere(3)
+        sc = Import(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.stl'))
+        osc = o + sc 
+        self.assertTrue('example.stl' in osc.dumps())
