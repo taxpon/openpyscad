@@ -34,6 +34,7 @@ class MetaObject(type):
                            True),
         "rotate_extrude": ("rotate_extrude", ("angle", "convexity",
                            "_fn"), True),
+        "projection": ("projection", ("cut"), True),
         # 2D
         "circle": ("circle", ("r", "d", "_fn"), False),
         "square": ("square", ("size", "center"), False),
@@ -310,6 +311,9 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
         from .transformations import Rotate_Extrude
         return Rotate_Extrude(*args, **kwargs).append(self)
 
+    def projection(self, *args, **kwargs):
+        from .transformations import Projection
+        return Projection(*args, **kwargs).append(self)
 
 BaseObject = _BaseObject
 

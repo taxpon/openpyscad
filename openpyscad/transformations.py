@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import openpyscad.base as base
 
-__all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski", "Linear_Extrude", "Rotate_Extrude"]
+__all__ = ["Translate", "Rotate", "Scale", "Resize", "Mirror", "Color", "Offset", "Hull", "Minkowski", "Linear_Extrude", "Rotate_Extrude", "Projection"]
 
 
 class _Transformation(base.BaseObject):
@@ -63,3 +63,6 @@ class Rotate_Extrude(_Transformation):
         from .shapes_2d import Shape2dObject
         if not isinstance(obj, (Shape2dObject, Transformation)):
             raise TypeError("Appended object must be a instance of Shape2dObject.")
+
+class Projection(_Transformation):
+    pass
