@@ -34,7 +34,7 @@ class MetaObject(type):
                            True),
         "rotate_extrude": ("rotate_extrude", ("angle", "convexity",
                            "_fn"), True),
-        "projection": ("projection", ("cut"), True),
+        "projection": ("projection", ("cut", ), True),
         # 2D
         "circle": ("circle", ("r", "d", "_fn"), False),
         "square": ("square", ("size", "center"), False),
