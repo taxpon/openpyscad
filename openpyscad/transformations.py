@@ -64,5 +64,6 @@ class Rotate_Extrude(_Transformation):
         if not isinstance(obj, (Shape2dObject, Transformation)):
             raise TypeError("Appended object must be a instance of Shape2dObject.")
 
+
 class Projection(_Transformation):
     pass
