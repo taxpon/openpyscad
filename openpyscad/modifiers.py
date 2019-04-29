@@ -34,15 +34,15 @@ class Modifier(object):
         self.is_transparent = False
 
     def get_prefix(self):
-        prefix = ""
+        prefix = ''
         if self.is_disable:
-            prefix += "*"
+            prefix += '*'
         if self.is_show_only:
-            prefix += "!"
+            prefix += '!'
         if self.is_debug:
-            prefix += "#"
+            prefix += '#'
         if self.is_transparent:
-            prefix += "%"
+            prefix += '%'
         return prefix
 
 

@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from .base import _BaseObject
 
-__all__ = ["Sphere", "Cube", "Cylinder", "Polyhedron", "Surface"]
+__all__ = ['Sphere', 'Cube', 'Cylinder', 'Polyhedron', 'Surface']
 
 
 # 3D

@@ -1,5 +1,3 @@
-from math import cos, sin, pi
-
 import openpyscad as ops
 
 

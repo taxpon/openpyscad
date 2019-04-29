@@ -1,17 +1,33 @@
 language: python
-
+sudo: required
+dist: xenial
 python:
   - 2.7
   - 3.4
   - 3.5
   - 3.6
+  - 3.7
+  - 3.8-dev
 
 install:
-  - pip install coveralls pep8 six
+  - pip install -U pip
+  - pip install -r requirements.txt
+  - pip install -r requirements_dev.txt
+
+jobs:
+  include:
+    - stage: check
+      script: flake8 --ignore E501 openpyscad
 
 script:
-  - bash pep8.sh
   - nosetests  --with-coverage --cover-package=openpyscad
 
 after_success:
-  coveralls
+  - coveralls
+
+stages:
+  - check
+  - test
+
+notifications:
+  email: false
