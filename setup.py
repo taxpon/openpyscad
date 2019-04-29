@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 import openpyscad
 
-with open('README.rst', 'r') as fh:
+with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 with open('requirements.txt', 'r') as fh:
@@ -18,10 +18,10 @@ setup(
     author_email=openpyscad.__email__,
     description='Python library to generate OpenSCAD source code',
     long_description=long_description,
-    long_description_content_type='text/x-rst',
+    long_description_content_type='text/markdown',
     url=openpyscad.__url__,
     license=openpyscad.__license__,
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
     install_requires=requirements,
     classifiers=[
         'Intended Audience :: Developers',
