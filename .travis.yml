@@ -17,8 +17,6 @@ jobs:
   include:
     - stage: check
       script: flake8 --ignore E501 openpyscad
-    - stage: check
-      script: flake8 --ignore E501 tests
 
 script:
   - nosetests  --with-coverage --cover-package=openpyscad
