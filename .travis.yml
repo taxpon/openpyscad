@@ -1,5 +1,6 @@
 language: python
-
+sudo: required
+dist: xenial
 python:
   - 2.7
   - 3.4
@@ -16,4 +17,4 @@ script:
   - nosetests  --with-coverage --cover-package=openpyscad
 
 after_success:
-  coveralls
+  - coveralls
