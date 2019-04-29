@@ -10,7 +10,7 @@ from .transformations import *  # noqa: F401,F403
 from .custom2dshapes import Custom2dShapes  # noqa: F401,F403
 
 __name__ = 'OpenPySCAD'
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 __author__ = 'Takuro Wada'
 __email__ = 'taxpon@gmail.com'
 __url__ = 'https://github.com/taxpon/openpyscad'
