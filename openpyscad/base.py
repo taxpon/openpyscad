@@ -8,64 +8,64 @@ import os
 
 from .modifiers import ModifierMixin
 
-__all__ = ["Empty", "BaseObject", "Scad", "Import"]
-INDENT = "    "
+__all__ = ['Empty', 'BaseObject', 'Scad', 'Import']
+INDENT = '    '
 
 
 class MetaObject(type):
 
     object_definition = {
         # Bool
-        "union": ("union", (), True),
-        "difference": ("difference", (), True),
-        "intersection": ("intersection", (), True),
+        'union': ('union', (), True),
+        'difference': ('difference', (), True),
+        'intersection': ('intersection', (), True),
         # Transforms
-        "translate": ("translate", ("v", ), True),
-        "rotate": ("rotate", ("a", "v"), True),
-        "scale": ("scale", ("v", ), True),
-        "resize": ("resize", ("newsize", "auto"), True),
-        "mirror": ("mirror", ("__axis", ), True),
-        "color": ("color", ("__color", "a"), True),
-        "offset": ("offset", ("r", "chamfer"), True),
-        "minkowski": ("minkowski", (), True),
-        "hull": ("hull", (), True),
-        "linear_extrude": ("linear_extrude", ("height", "center",
-                           "convexity", "twist", "slices", "scale"),
+        'translate': ('translate', ('v', ), True),
+        'rotate': ('rotate', ('a', 'v'), True),
+        'scale': ('scale', ('v', ), True),
+        'resize': ('resize', ('newsize', 'auto'), True),
+        'mirror': ('mirror', ('__axis', ), True),
+        'color': ('color', ('__color', 'a'), True),
+        'offset': ('offset', ('r', 'chamfer'), True),
+        'minkowski': ('minkowski', (), True),
+        'hull': ('hull', (), True),
+        'linear_extrude': ('linear_extrude', ('height', 'center',
+                           'convexity', 'twist', 'slices', 'scale'),
                            True),
-        "rotate_extrude": ("rotate_extrude", ("angle", "convexity",
-                           "_fn"), True),
+        'rotate_extrude': ('rotate_extrude', ('angle', 'convexity',
+                           '_fn'), True),
         # 2D
-        "circle": ("circle", ("r", "d", "_fn"), False),
-        "square": ("square", ("size", "center"), False),
-        "polygon": ("polygon", ("points", "paths", "convexity"), False),
-        "text": ("text",
-                 ("text", "size", "font", "halign", "valign", "spacing",
-                  "direction", "language", "script", "_fn"),
+        'circle': ('circle', ('r', 'd', '_fn'), False),
+        'square': ('square', ('size', 'center'), False),
+        'polygon': ('polygon', ('points', 'paths', 'convexity'), False),
+        'text': ('text',
+                 ('text', 'size', 'font', 'halign', 'valign', 'spacing',
+                  'direction', 'language', 'script', '_fn'),
                  False),
         # 3D
-        "sphere": ("sphere", ("r", "d", "center", "_fa", "_fs", "_fn"), False),
-        "cube": ("cube", ("size", "center"), False),
-        "cylinder": ("cylinder",
-                     ("h", "r", "r1", "r2", "d", "d1", "d2",
-                      "center", "_fa", "_fs", "_fn"),
+        'sphere': ('sphere', ('r', 'd', 'center', '_fa', '_fs', '_fn'), False),
+        'cube': ('cube', ('size', 'center'), False),
+        'cylinder': ('cylinder',
+                     ('h', 'r', 'r1', 'r2', 'd', 'd1', 'd2',
+                      'center', '_fa', '_fs', '_fn'),
                      False
                      ),
-        "scad": ("scad", ("scadfile", "version"), False),
-        "import": ("import", ("file", "convexity"), False),
-        "surface": ("surface", ("file", "center", "invert", "convexity"), False),
-        "polyhedron": ("polyhedron",
-                       ("points", "triangles", "faces", "convexity"),
+        'scad': ('scad', ('scadfile', 'version'), False),
+        'import': ('import', ('file', 'convexity'), False),
+        'surface': ('surface', ('file', 'center', 'invert', 'convexity'), False),
+        'polyhedron': ('polyhedron',
+                       ('points', 'triangles', 'faces', 'convexity'),
                        False)
     }
 
     def __new__(mcs, name, bases, attr):
-        if name[0] != "_":
+        if name[0] != '_':
             definition = MetaObject.object_definition[name.lower()]
             attr['_name'] = definition[0]
             attr['_properties'] = definition[1]
             for param in definition[1]:
                 attr[param] = None
-            attr["has_child"] = definition[2]
+            attr['has_child'] = definition[2]
         return type.__new__(mcs, name, bases, attr)
 
 
@@ -90,18 +90,19 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             return None
         try:
             if isinstance(val, (str, unicode)):
-                return "\"{}\"".format(val)
-        except:
-            if isinstance(val, (str)):
-                return "\"{}\"".format(val)
+                return '"{}"'.format(val)
+        except Exception as e:
+            print(e)
+            if isinstance(val, str):
+                return '"{}"'.format(val)
 
-        return "{}".format(val)
+        return '{}'.format(val)
 
     def _get_params(self, fp=None):
         valid_keys = list(filter(lambda x: getattr(self, x) is not None, self._properties))
 
         def is_no_keyword_args(arg_name):
-            if arg_name[0] == "_" and arg_name[1] == "_":
+            if arg_name[0] == '_' and arg_name[1] == '_':
                 return True
             return False
 
@@ -109,9 +110,9 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             return not is_no_keyword_args(arg_name)
 
         def convert_special_args(arg_name):
-            if arg_name[0] == "_":
-                if arg_name[1] != "_":
-                    return "$" + arg_name[1:]
+            if arg_name[0] == '_':
+                if arg_name[1] != '_':
+                    return '$' + arg_name[1:]
             return arg_name
 
         def _get_attr(self, x, fp):
@@ -143,19 +144,19 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             else:
                 return(getattr(self, x))
 
-        args = ""
+        args = ''
         # no-keyword args
         no_kw_args = list(filter(lambda x: is_no_keyword_args(x), valid_keys))
-        args += " ".join(map(lambda x: "{},".format(self._retrieve_value(x)), no_kw_args))[:-1]
+        args += ' '.join(map(lambda x: '{},'.format(self._retrieve_value(x)), no_kw_args))[:-1]
 
         # keyword args
         kw_args = filter(lambda x: is_keyword_args(x), valid_keys)
-        args += " ".join(map(lambda x: "{}={},".format(convert_special_args(x), _get_attr(self, x, fp)), kw_args))[:-1]
+        args += ' '.join(map(lambda x: '{}={},'.format(convert_special_args(x), _get_attr(self, x, fp)), kw_args))[:-1]
         args = args.replace('scadfile=', '')
         return args
 
     def _get_children_content(self, indent_level=0, fp=None):
-        _content = ""
+        _content = ''
         if len(self.children) > 0:
             for child in self.children:
                 _content += child.dumps(indent_level, fp)
@@ -164,9 +165,9 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
     def _get_content(self, indent_level=0, fp=None):
         if len(self.children) == 0:
-            return ""
+            return ''
         else:
-            return "{{\n{children}{indent}}}".format(
+            return '{{\n{children}{indent}}}'.format(
                 children=self._get_children_content(indent_level + 1, fp=fp),
                 indent=INDENT * indent_level
             )
@@ -178,7 +179,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
     def append(self, obj):
         if not self.has_child:
-            raise TypeError("This object can not have any children.")
+            raise TypeError('This object can not have any children.')
         else:
             self._validate_append(obj)
             if isinstance(obj, (list, tuple, set)):
@@ -193,14 +194,14 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
         fp.write(dumps)
 
     def dumps(self, indent_level=0, fp=None):
-        if self._name == "scad":
-            return "{indent}{prefix}{params};\n".format(
+        if self._name == 'scad':
+            return '{indent}{prefix}{params};\n'.format(
                 indent=INDENT * indent_level,
                 prefix=self.mod.get_prefix(),
                 params=self._get_params(fp).replace('True', 'true')
             )
         else:
-            return "{indent}{prefix}{op_name}({params}){content};\n".format(
+            return '{indent}{prefix}{op_name}({params}){content};\n'.format(
                 indent=INDENT * indent_level,
                 prefix=self.mod.get_prefix(),
                 op_name=self._name,
@@ -209,7 +210,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
             )
 
     def write(self, filename, with_print=False):
-        with open(filename, "w") as fp:
+        with open(filename, 'w') as fp:
             self.dump(fp)
         if with_print:
             print(self.dumps())
@@ -316,6 +317,7 @@ BaseObject = _BaseObject
 
 class _Empty(_BaseObject):
     pass
+
 
 Empty = _Empty
 
