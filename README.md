@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/taxpon/openpyscad.svg?branch=develop)](https://travis-ci.org/taxpon/openpyscad) [![Coverage Status](https://coveralls.io/repos/github/taxpon/openpyscad/badge.svg?branch=develop)](https://coveralls.io/github/taxpon/openpyscad?branch=develop) [![Python2](https://img.shields.io/badge/python-2-blue.svg)](#) [![Python3](https://img.shields.io/badge/python-3-blue.svg)](#)
 # OpenPySCAD
 Python library to generate [OpenSCAD](http://www.openscad.org/) source code. This library provides intuitive interface when you handle 3D data.
-OpenPySCAD supports both python2(2.7) and python3(3.4+).
+OpenPySCAD supports python3(3.5+).
 
 ## Install
 ```bash
@@ -178,6 +178,6 @@ c1.is_debug()        # add "#" character
 c1.is_transparent()  # add "&" character
 ```
 
+## Interested in contribution?
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md). 
 
-### LICENSE
-MIT

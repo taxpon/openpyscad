@@ -26,7 +26,7 @@ class MetaObject(type):
         'resize': ('resize', ('newsize', 'auto'), True),
         'mirror': ('mirror', ('__axis', ), True),
         'color': ('color', ('__color', 'a'), True),
-        'offset': ('offset', ('r', 'chamfer'), True),
+        'offset': ('offset', ('r', 'chamfer', '_fn'), True),
         'minkowski': ('minkowski', (), True),
         'hull': ('hull', (), True),
         'linear_extrude': ('linear_extrude', ('height', 'center',
@@ -89,7 +89,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
         if val is None:
             return None
         try:
-            if isinstance(val, (str, unicode)):
+            if isinstance(val, str):
                 return '"{}"'.format(val)
         except Exception as e:
             print(e)

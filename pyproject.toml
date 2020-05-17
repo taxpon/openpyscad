@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "openpyscad"
+version = "0.3.3"
+description = "Python library to generate OpenSCAD source code"
+authors = ["Takuro Wada <taxpon@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/taxpon/openpyscad"
+license = "MIT"
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Code Generators"
+]
+
+[tool.poetry.dependencies]
+python = "^3.5"
+six = "^1.14.0"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.8.1"
+nose = "^1.3.7"
+coveralls = "^2.0.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

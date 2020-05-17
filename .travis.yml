@@ -2,17 +2,15 @@ language: python
 sudo: required
 dist: xenial
 python:
-  - 2.7
-  - 3.4
   - 3.5
   - 3.6
   - 3.7
-  - 3.8-dev
+  - 3.8
+  - 3.9-dev
 
 install:
-  - pip install -U pip
-  - pip install -r requirements.txt
-  - pip install -r requirements_dev.txt
+  - pip install -U poetry
+  - poetry install
 
 jobs:
   include:
@@ -25,9 +23,31 @@ script:
 after_success:
   - coveralls
 
+before_deploy:
+  - git config --local user.name "taxpon"
+  - git config --local user.email "taxpon@gmail.com"
+  - poetry version minor
+  - export RELEASE_VERSION=$(poetry version | cut -d ' ' -f 2)
+  - git tag $RELEASE_VERSION
+
+deploy:
+  provider: script
+  script: poetry publish -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD}
+  skip_cleanup: true
+  on:
+    branch: master
+
+after_deploy:
+  - git checkout develop
+  - git commit -a -m "Bump version"
+  - git push origin develop
+  - git push origin --tags
+
 stages:
   - check
   - test
+  - name: deploy
+    if: branch = master AND type != pull_request
 
 notifications:
   email: false
