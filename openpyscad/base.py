@@ -89,7 +89,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
         if val is None:
             return None
         try:
-            if isinstance(val, (str, unicode)):
+            if isinstance(val, str):
                 return '"{}"'.format(val)
         except Exception as e:
             print(e)

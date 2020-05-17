@@ -74,7 +74,7 @@ class TestBaseObject(unittest.TestCase):
         self.assertEqual(c1.dumps(), "cube(size=10);\n")
 
     def test_write(self):
-        from mock import mock_open, patch
+        from unittest.mock import mock_open, patch
         c1 = Cube(size=10)
         m_open = mock_open()
         try:
