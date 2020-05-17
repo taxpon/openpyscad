@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/taxpon/openpyscad.svg?branch=develop)](https://travis-ci.org/taxpon/openpyscad) [![Coverage Status](https://coveralls.io/repos/github/taxpon/openpyscad/badge.svg?branch=develop)](https://coveralls.io/github/taxpon/openpyscad?branch=develop) [![Python2](https://img.shields.io/badge/python-2-blue.svg)](#) [![Python3](https://img.shields.io/badge/python-3-blue.svg)](#)
+[![Build Status](https://travis-ci.org/taxpon/openpyscad.svg?branch=develop)](https://travis-ci.org/taxpon/openpyscad) [![Coverage Status](https://coveralls.io/repos/github/taxpon/openpyscad/badge.svg?branch=develop)](https://coveralls.io/github/taxpon/openpyscad?branch=develop) [![Python3](https://img.shields.io/badge/python-3-blue.svg)](#)
 # OpenPySCAD
 Python library to generate [OpenSCAD](http://www.openscad.org/) source code. This library provides intuitive interface when you handle 3D data.
 OpenPySCAD supports python3(3.5+).
@@ -17,7 +17,8 @@ c2 = ops.Cube([20, 10, 10])
 (c1 + c2).write("sample.scad")
 ```
 
-- Generated code will be written in the "sample.scad". OpenSCAD can detect the change of your code and reload automatically. That's so cool :D
+- Generated code will be written in the "sample.scad".
+- For automatic reload and preview, you need to turn on "Design > Automatic Reload and Preview" in OpenSCAD
 ```openscad
 union(){
     cube([10, 20, 10]);
