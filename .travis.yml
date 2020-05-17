@@ -28,7 +28,7 @@ before_deploy:
   - git config --local user.email "taxpon@gmail.com"
   - poetry version minor
   - export RELEASE_VERSION=$(poetry version | cut -d ' ' -f 2)
-  - git tag $RELEASE_VERSION
+  - git tag -a "$RELEASE_VERSION" -m "$RELEASE_VERSION"
 
 deploy:
   provider: script
