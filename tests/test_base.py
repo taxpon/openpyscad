@@ -89,6 +89,7 @@ class TestBaseObject(unittest.TestCase):
         handle = m_open()
         handle.write.assert_called_once_with("cube(size=10);\n")
 
+
     def test_clone(self):
         c1 = Cube(size=10)
         c2 = c1.clone()
@@ -226,6 +227,12 @@ class TestBaseObject(unittest.TestCase):
         self.assertTrue(isinstance(o1, Rotate_Extrude))
         self.assertEqual(o1.children, [o])
     
+    def test_projection(self):
+        o = Circle(10)
+        o1 = o.projection()
+        self.assertTrue(isinstance(o1, Projection))
+        self.assertEqual(o1.children, [o])
+
     def test_scad_write(self):
         sc = Scad(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.scad')) 
         self.assertTrue('example' in sc.dumps())
