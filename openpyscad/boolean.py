@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 import openpyscad.base as base
 
-__all__ = ["Union", "Difference", "Intersection"]
+__all__ = ['Union', 'Difference', 'Intersection']
 
 
 class Union(base.BaseObject):
