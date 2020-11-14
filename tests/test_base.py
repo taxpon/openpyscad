@@ -77,6 +77,9 @@ class TestBaseObject(unittest.TestCase):
         c1 = Cube(size=10).comment("Test comment")
         self.assertEqual(c1.dumps(), "cube(size=10); // Test comment\n")
 
+        t1 = Cube(size=10).translate([0, 0, 0]).comment("Test")
+        self.assertEqual(t1.dumps(), "translate(v=[0, 0, 0]){\n    cube(size=10);\n}; // Test\n")
+
         sc = Scad(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.scad')).comment("Test comment")
         self.assertTrue(' // Test comment\n' in sc.dumps())
 
