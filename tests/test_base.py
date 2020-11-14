@@ -73,6 +73,13 @@ class TestBaseObject(unittest.TestCase):
         c1 = Cube(size=10)
         self.assertEqual(c1.dumps(), "cube(size=10);\n")
 
+    def test_comment(self):
+        c1 = Cube(size=10).comment("Test comment")
+        self.assertEqual(c1.dumps(), "cube(size=10); // Test comment\n")
+
+        sc = Scad(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.scad')).comment("Test comment")
+        self.assertTrue(' // Test comment\n' in sc.dumps())
+
     def test_write(self):
         from unittest.mock import mock_open, patch
         c1 = Cube(size=10)
