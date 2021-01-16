@@ -6,7 +6,8 @@ __all__ = ['Circle', 'Square', 'Polygon', 'Text']
 
 
 class _Shape2dObject(_BaseObject):
-    pass
+    def _is_2d(self):
+        return True
 
 
 Shape2dObject = _Shape2dObject
