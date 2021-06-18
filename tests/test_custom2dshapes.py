@@ -12,3 +12,7 @@ class TestCustom2dShapes(unittest.TestCase):
         c = c2d.star(20, [6, 10])
         self.assertTrue(c.dumps().startswith("polygon(points=[[6.0, 0.0], [9.5"))
 
+    def test_is_2d(self):
+        triangle = c2d.regular_polygon(3, 10)
+        self.assertTrue(triangle._is_2d())
+
