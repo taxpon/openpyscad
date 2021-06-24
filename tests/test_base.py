@@ -109,7 +109,7 @@ class TestBaseObject(unittest.TestCase):
         c1 = Cube(size=10)
         self.assertEqual(str(c1), "cube(size=10);\n")
 
-    def test_add(self):
+    def test_add_3d(self):
         o = Empty()
         c1 = Cube(10)
         self.assertTrue((o + c1).equals(c1))
@@ -123,7 +123,7 @@ class TestBaseObject(unittest.TestCase):
         self.assertTrue(u2.children[0].equals(c1))
         self.assertTrue(u2.children[1].equals(c2))
 
-    def test_sub(self):
+    def test_sub_3d(self):
         o = Empty()
         c1 = Cube(10)
         self.assertTrue((o - c1).equals(c1))
@@ -133,6 +133,34 @@ class TestBaseObject(unittest.TestCase):
         self.assertTrue(d1.children[0].equals(c1))
 
         c2 = Cube(20)
+        d2 = c1 - c2
+        self.assertTrue(d2.children[0].equals(c1))
+        self.assertTrue(d2.children[1].equals(c2))
+
+    def test_add_2d(self):
+        o = Empty()
+        c1 = Square(10)
+        self.assertTrue((o + c1).equals(c1))
+
+        u = Union()
+        u1 = u + c1
+        self.assertTrue(u1.children[0].equals(c1))
+
+        c2 = Square(20)
+        u2 = c1 + c2
+        self.assertTrue(u2.children[0].equals(c1))
+        self.assertTrue(u2.children[1].equals(c2))
+
+    def test_sub_2d(self):
+        o = Empty()
+        c1 = Square(10)
+        self.assertTrue((o - c1).equals(c1))
+
+        d = Difference()
+        d1 = d - c1
+        self.assertTrue(d1.children[0].equals(c1))
+
+        c2 = Square(20)
         d2 = c1 - c2
         self.assertTrue(d2.children[0].equals(c1))
         self.assertTrue(d2.children[1].equals(c2))
@@ -242,3 +270,21 @@ class TestBaseObject(unittest.TestCase):
         sc = Import(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','example','example.stl'))
         osc = o + sc 
         self.assertTrue('example.stl' in osc.dumps())
+
+    def test_is_2d(self):
+        s1 = Square(10)
+        s2 = Square(20)
+        c1 = Cube(10)
+        c2 = Cube(20)
+
+        d1 = s1 - s2
+        self.assertTrue(d1._is_2d())
+
+        d2 = c1 - c2
+        self.assertFalse(d2._is_2d())
+
+        a1 = s1 + s2
+        self.assertTrue(a1._is_2d())
+
+        a2 = c1 + c2
+        self.assertFalse(a2._is_2d())

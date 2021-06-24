@@ -67,3 +67,4 @@ target/
 # Created by nosetests
 cover/ 
 example_module.scad
+sandbox
