@@ -54,13 +54,13 @@ class Minkowski(_Transformation):
 
 class Linear_Extrude(_Transformation):
     def _validate_append(self, obj):
-        from .shapes_2d import Shape2dObject
-        if not isinstance(obj, (Shape2dObject, Transformation)):
-            raise TypeError('Appended object must be a instance of Shape2dObject or Transformation.')
+
+        if not isinstance(obj, base.BaseObject) or not obj._is_2d():
+            raise TypeError('Appended object must be a 2D shape.')
 
 
 class Rotate_Extrude(_Transformation):
     def _validate_append(self, obj):
-        from .shapes_2d import Shape2dObject
-        if not isinstance(obj, (Shape2dObject, Transformation)):
-            raise TypeError('Appended object must be a instance of Shape2dObject.')
+
+        if not isinstance(obj, base.BaseObject) or not obj._is_2d():
+            raise TypeError('Appended object must be a 2D shape.')
