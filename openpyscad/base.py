@@ -74,6 +74,7 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
     def __init__(self, *args, **kwargs):
         super(_BaseObject, self).__init__()
         self.modules = list()
+        self._comment = None
         for k, v in kwargs.items():
             if hasattr(self.__class__, k):
                 setattr(self, k, v)
@@ -203,18 +204,20 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
 
     def dumps(self, indent_level=0, fp=None):
         if self._name == 'scad':
-            return '{indent}{prefix}{params};\n'.format(
+            return '{indent}{prefix}{params};{comment}\n'.format(
                 indent=INDENT * indent_level,
                 prefix=self.mod.get_prefix(),
-                params=self._get_params(fp).replace('True', 'true')
+                params=self._get_params(fp).replace('True', 'true'),
+                comment='' if self._comment is None else ' // {}'.format(self._comment)
             )
         else:
-            return '{indent}{prefix}{op_name}({params}){content};\n'.format(
+            return '{indent}{prefix}{op_name}({params}){content};{comment}\n'.format(
                 indent=INDENT * indent_level,
                 prefix=self.mod.get_prefix(),
                 op_name=self._name,
                 params=self._get_params(fp).replace('True', 'true'),
-                content=self._get_content(indent_level, fp=fp)
+                content=self._get_content(indent_level, fp=fp),
+                comment='' if self._comment is None else ' // {}'.format(self._comment)
             )
 
     def write(self, filename, with_print=False):
@@ -318,6 +321,10 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
     def rotate_extrude(self, *args, **kwargs):
         from .transformations import Rotate_Extrude
         return Rotate_Extrude(*args, **kwargs).append(self)
+
+    def comment(self, comment):
+        self._comment = comment
+        return self
 
 
 BaseObject = _BaseObject
