@@ -172,6 +172,14 @@ class _BaseObject(with_metaclass(MetaObject, ModifierMixin, object)):
                 indent=INDENT * indent_level
             )
 
+    def _is_2d(self):
+        '''Defaults to False if no children, else
+        returns true if all children are 2D. 2D shapes should override and return True.'''
+        if len(self.children) == 0:
+            return False
+
+        return all([i._is_2d() for i in self.children])
+
     def _validate_append(self, obj):
         """Override if any validation in append operation is required.
         :param obj:
